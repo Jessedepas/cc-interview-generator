@@ -4,15 +4,18 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { GeneratorForm } from "@/components/generator-form";
 import { QuestionnaireView } from "@/components/questionnaire-view";
+import { ProfileCreator } from "@/components/profile-creator";
 import { LoginGate } from "@/components/login-gate";
 import type { InterviewGuide } from "@/lib/types";
+
+type Tool = "interview" | "profile";
 
 export default function Home() {
   const [guide, setGuide] = useState<InterviewGuide | null>(null);
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [activeTool, setActiveTool] = useState<Tool>("interview");
 
   useEffect(() => {
-    // Check if already authenticated (cookie exists)
     fetch("/api/auth/check").then((res) => {
       setAuthenticated(res.ok);
     });
@@ -34,12 +37,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header activeTool={activeTool} onToolChange={setActiveTool} />
       <main className="max-w-5xl mx-auto px-6 py-8">
-        {guide ? (
-          <QuestionnaireView guide={guide} onBack={() => setGuide(null)} />
+        {activeTool === "interview" ? (
+          guide ? (
+            <QuestionnaireView guide={guide} onBack={() => setGuide(null)} />
+          ) : (
+            <GeneratorForm onGenerated={setGuide} />
+          )
         ) : (
-          <GeneratorForm onGenerated={setGuide} />
+          <ProfileCreator />
         )}
       </main>
       <footer className="no-print text-center py-4 text-xs text-gray-400">
