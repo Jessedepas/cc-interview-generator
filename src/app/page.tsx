@@ -1,13 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { GeneratorForm } from "@/components/generator-form";
 import { QuestionnaireView } from "@/components/questionnaire-view";
+import { LoginGate } from "@/components/login-gate";
 import type { InterviewGuide } from "@/lib/types";
 
 export default function Home() {
   const [guide, setGuide] = useState<InterviewGuide | null>(null);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check if already authenticated (cookie exists)
+    fetch("/api/auth/check").then((res) => {
+      setAuthenticated(res.ok);
+    });
+  }, []);
+
+  // Loading state
+  if (authenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1A3B]">
+        <div className="text-white text-sm">Loading...</div>
+      </div>
+    );
+  }
+
+  // Not authenticated
+  if (!authenticated) {
+    return <LoginGate onAuthenticated={() => setAuthenticated(true)} />;
+  }
 
   return (
     <div className="min-h-screen">
