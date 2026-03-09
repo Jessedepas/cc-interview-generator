@@ -4,6 +4,17 @@ import path from "path";
 import fs from "fs";
 import type { ProfileData } from "@/lib/profile-types";
 
+// Pre-load logo at module level
+let logoBuffer: Buffer | null = null;
+try {
+  const logoPath = path.join(process.cwd(), "public", "logo.png");
+  if (fs.existsSync(logoPath)) {
+    logoBuffer = fs.readFileSync(logoPath);
+  }
+} catch {
+  // Logo not available — will skip in PDF
+}
+
 // Brand colors
 const NAVY = "#0B1A3B";
 const RED = "#C0503C";
@@ -46,6 +57,7 @@ async function generateProfilePDF(data: ProfileData): Promise<Buffer> {
     const doc = new PDFDocument({
       size: "A4",
       margins: { top: 0, bottom: 0, left: 0, right: 0 },
+      bufferPages: true,
       info: {
         Title: `${data.candidateName} - Cruise Control Group Remote Professional Profile`,
         Author: "Cruise Control Group",
@@ -56,12 +68,6 @@ async function generateProfilePDF(data: ProfileData): Promise<Buffer> {
     doc.on("data", (chunk: Buffer) => chunks.push(chunk));
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
-
-    // Register Helvetica is built-in to PDFKit
-
-    // Load logo
-    const logoPath = path.join(process.cwd(), "public", "logo.png");
-    const logoExists = fs.existsSync(logoPath);
 
     // === DRAW HEADER ===
     const headerH = 85;
@@ -106,8 +112,8 @@ async function generateProfilePDF(data: ProfileData): Promise<Buffer> {
     }
 
     // Logo
-    if (logoExists) {
-      doc.image(logoPath, W - MARGIN - 60, 10, {
+    if (logoBuffer) {
+      doc.image(logoBuffer, W - MARGIN - 60, 10, {
         width: 55,
         height: 55,
       });
