@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-type Tool = "interview" | "profile";
+type Tool = "interview" | "profile" | "onboarding";
 
 interface HeaderProps {
   activeTool: Tool;
@@ -48,6 +48,16 @@ export function Header({ activeTool, onToolChange }: HeaderProps) {
             }`}
           >
             Profile Creator
+          </button>
+          <button
+            onClick={() => onToolChange("onboarding")}
+            className={`px-4 py-2 text-sm font-medium rounded-t transition-colors ${
+              activeTool === "onboarding"
+                ? "bg-white text-[#0B1A3B]"
+                : "text-[#F2E6D9] hover:text-white hover:bg-white/10"
+            }`}
+          >
+            Onboarding
           </button>
         </nav>
       </div>

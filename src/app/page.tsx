@@ -5,10 +5,11 @@ import { Header } from "@/components/header";
 import { GeneratorForm } from "@/components/generator-form";
 import { QuestionnaireView } from "@/components/questionnaire-view";
 import { ProfileCreator } from "@/components/profile-creator";
+import { IntegrationQuestionnaire } from "@/components/integration-questionnaire";
 import { LoginGate } from "@/components/login-gate";
 import type { InterviewGuide } from "@/lib/types";
 
-type Tool = "interview" | "profile";
+type Tool = "interview" | "profile" | "onboarding";
 
 export default function Home() {
   const [guide, setGuide] = useState<InterviewGuide | null>(null);
@@ -45,8 +46,10 @@ export default function Home() {
           ) : (
             <GeneratorForm onGenerated={setGuide} />
           )
-        ) : (
+        ) : activeTool === "profile" ? (
           <ProfileCreator />
+        ) : (
+          <IntegrationQuestionnaire />
         )}
       </main>
       <footer className="no-print text-center py-4 text-xs text-gray-400">
