@@ -423,6 +423,94 @@ async function generateIntegrationPDF(
     );
     y = doc.y + 10;
 
+    // === SIGNATURE BLOCK ===
+    y += 15;
+    y = checkPageBreak(doc, y, 120);
+    y = drawSectionTitle(doc, "Acknowledgement & Sign-Off", y);
+    y += 10;
+
+    doc.font("Helvetica").fontSize(9).fillColor(DARK_TEXT);
+    doc.text(
+      "By signing below, both parties acknowledge that the onboarding program, KPIs, training plan, and check-in schedule outlined in this document have been reviewed and agreed upon.",
+      MARGIN + 5,
+      y,
+      { width: CONTENT_W - 10 }
+    );
+    y = doc.y + 20;
+
+    const sigColW = (CONTENT_W - 30) / 2;
+
+    // Client signature
+    doc.font("Helvetica-Bold").fontSize(9).fillColor(NAVY);
+    doc.text("Client Representative", MARGIN, y);
+    y = doc.y + 25;
+    doc
+      .moveTo(MARGIN, y)
+      .lineTo(MARGIN + sigColW, y)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    y += 4;
+    doc.font("Helvetica").fontSize(8).fillColor(MID_GRAY);
+    doc.text("Signature", MARGIN, y);
+    y += 18;
+    doc
+      .moveTo(MARGIN, y)
+      .lineTo(MARGIN + sigColW, y)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    y += 4;
+    doc.text("Name", MARGIN, y);
+    y += 18;
+    doc
+      .moveTo(MARGIN, y)
+      .lineTo(MARGIN + sigColW * 0.5, y)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    y += 4;
+    doc.text("Date", MARGIN, y);
+
+    // CC signature (same row, right column)
+    const ccX = MARGIN + sigColW + 30;
+    let ccY = doc.y - 18 - 4 - 18 - 4 - 25 - (doc.y - (y - 4 - 18 - 4 - 18 - 4 - 25));
+
+    // Recalculate from the "Client Representative" position
+    ccY = y - 4 - 18 - 4 - 18 - 4 - 25 - 4;
+    doc.font("Helvetica-Bold").fontSize(9).fillColor(NAVY);
+    doc.text("Cruise Control Group", ccX, ccY);
+    ccY += 29;
+    doc
+      .moveTo(ccX, ccY)
+      .lineTo(ccX + sigColW, ccY)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    ccY += 4;
+    doc.font("Helvetica").fontSize(8).fillColor(MID_GRAY);
+    doc.text("Signature", ccX, ccY);
+    ccY += 18;
+    doc
+      .moveTo(ccX, ccY)
+      .lineTo(ccX + sigColW, ccY)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    ccY += 4;
+    doc.text("Name", ccX, ccY);
+    ccY += 18;
+    doc
+      .moveTo(ccX, ccY)
+      .lineTo(ccX + sigColW * 0.5, ccY)
+      .strokeColor(NAVY)
+      .lineWidth(0.75)
+      .stroke();
+    ccY += 4;
+    doc.text("Date", ccX, ccY);
+
+    y = Math.max(y, ccY) + 15;
+
     // === Date generated ===
     y = checkPageBreak(doc, y, 20);
     doc.font("Helvetica").fontSize(8).fillColor(MID_GRAY);
